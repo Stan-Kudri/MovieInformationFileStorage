@@ -7,31 +7,37 @@ using System.Text.Json;
 
 namespace MovieInformationFileStorage
 {
+        //Проверку по пути добавлю, поздно подумал о ней....................
         internal class WorkingWithElements
     {
-        string path { get; set; }
-
+        //Путь файла
+        public string Path{get;set;}
+        //Существует ли файл в переданном пути
         private bool FileConnection { get; set; }
-        public WorkingWithElements()
-        {
-
-        }
+        //Список элементов
         List<RecordingInformation> records { get; set; }
-        public WorkingWithElements(string path) => this.path = path;
+        
+        //Конструктор принимаемый путь файла
+        public WorkingWithElements(string path) => this.Path = path;
 
+        //Проверка наличия файла, по выбранному пути
         public void CreateFileNotExists()
         {
-            if (!File.Exists(path)) File.Create(path);
+            if (!File.Exists(Path)) File.Create(Path);
             FileConnection = true;
         }
-        
+        //Прочитать элементы файла по переданному пути
         public void ReadItemsToFile()
         {
-            records = new List<RecordingInformation>();
-            var date = File.ReadAllText(path);
+            if((FileConnection == true) && (records == null))
+            {
+                records = new List<RecordingInformation>();
+                var fileDeserialization = new Serialization();
+                records = fileDeserialization.Deserialize(Path);
+            }
 
         }
-
+        //Добавить элемент в список
         public void AddElementToList(RecordingInformation itemInformation)
         {
             if( (FileConnection == true) && (itemInformation != null) )
@@ -39,28 +45,36 @@ namespace MovieInformationFileStorage
                 records.Add(itemInformation);
             }
         }
-
-        public void ChangeItemInList(RecordingInformation itemInformatio)
+        //Удалить элемент списка по индексу
+        public void DeliteItemInList(int index) => records.RemoveAt(index);
+        //Изменить элемент списка по индексу (далее будут формы, и его пользователю не нужно будет знать)
+        public void ChangeItemInList(RecordingInformation itemInformatio, int index)
+        {
+            if( (FileConnection == true) && (itemInformatio != null) )
+            {
+                records.Insert(index, itemInformatio);
+            }
+        }
+        //Сохранение сериализованного списка в файл по пути
+        public void SaveSerializeList()
+        {
+            var fileSerialization = new Serialization();
+            fileSerialization.Serialize(Path, records);
+        }
+        //Вывод десериализованной информации
+        public void WriteItemsToFile()
         {
             if(FileConnection == true)
             {
-
-            }
-        }
-
-        public void WriteItemsToFile(List <RecordingInformation> recordings)
-        {
-            /*using(BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
-            {
-                foreach(RecordingInformation recordingInformation in records )
+                records = new List<RecordingInformation>();
+                var fileDeserialization = new Serialization();
+                records = fileDeserialization.Deserialize(Path);
+                foreach(var itemInformation in records)
                 {
-                    writer.Write(recordingInformation.MovieLink);
-                    writer.Write(recordingInformation.MovieName);
+                    Console.Write(itemInformation.MovieLink + "   -   ");
+                    Console.WriteLine(itemInformation.MovieName);
                 }
-            }*/
-            var informationJson = JsonSerializer.Serialize(recordings, typeof(List<RecordingInformation>));
-            
-            
+            }
         }
 
 

@@ -16,7 +16,15 @@ List<RecordingInformation> recordingInformation = new List<RecordingInformation>
 };
 recordingInformation.Add(new RecordingInformation("http://fast-torrent.club/film/staroe.html", "Время"));
 
-foreach(var itemInformation in recordingInformation)
+
+Console.WriteLine("Путь файла, ");
+Console.WriteLine(pathWithTextFileName);
+
+
+
+
+
+foreach (var itemInformation in recordingInformation)
 {
     Console.Write(itemInformation.MovieLink + "   -   ");
     Console.WriteLine(itemInformation.MovieName);
@@ -29,11 +37,7 @@ movieInformationFileStorage.CreateFileNotExists();
 
 
 
-/*string personJson = JsonSerializer.Serialize(recordingInformation, typeof(List<RecordingInformation>));
-StreamWriter file = File.CreateText(pathWithTextFileName);
-file.WriteLine(personJson);
-file.Close();
-Console.WriteLine(personJson);*/
+
 
 var fileSerializationOrDeserialization = new Serialization();
 fileSerializationOrDeserialization.Serialize(pathWithTextFileName, recordingInformation);
@@ -50,16 +54,3 @@ foreach (var itemInformation in information)
     Console.WriteLine(itemInformation.MovieName);
 }
 
-/*var serializat = new Serialization();
-serializat.Serialize(pathWithTextFileName, recordingInformation);
-
-
-//information = FileSt
-string str = File.ReadAllText(pathWithTextFileName);
-Console.WriteLine(str);
-information = JsonSerializer.Deserialize<List<RecordingInformation>>(str);
-
-*/
-
-Console.WriteLine("Путь файла, ");
-Console.WriteLine(pathWithTextFileName);
