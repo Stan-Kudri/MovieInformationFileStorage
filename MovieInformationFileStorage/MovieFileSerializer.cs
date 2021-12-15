@@ -10,24 +10,20 @@ using System.Xml;
 
 namespace MovieInformationFileStorage
 {
-    internal class Serialization
+    internal class MovieFileSerializer
     {
-
-        public void Serialize( string path, List<RecordingInformation> recordings)
+        public void Serialize( string path, List<RecordInformation> recordings)
         {
-
-            string itemJson = JsonSerializer.Serialize(recordings, typeof (List<RecordingInformation>));
+            string itemJson = JsonSerializer.Serialize(recordings, typeof (List<RecordInformation>));
             Console.WriteLine(itemJson);
             StreamWriter streamWriter = new StreamWriter(path);
             streamWriter.WriteLine(itemJson);
             streamWriter.Close();
         }
-
-        public List<RecordingInformation> Deserialize (string path)
+        public List<RecordInformation> Deserialize (string path)
         {
             string strItemInforationDeserialize = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<List<RecordingInformation>>(strItemInforationDeserialize);
-            //List<RecordingInformation> recordings = 
+            return JsonSerializer.Deserialize<List<RecordInformation>>(strItemInforationDeserialize);           
         }
     }
 }

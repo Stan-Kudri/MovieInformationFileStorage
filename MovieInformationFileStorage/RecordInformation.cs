@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace MovieInformationFileStorage
 {
-    internal class RecordingInformation
+    internal class RecordInformation
     {
         public string MovieLink { get; set; }
 
         public string MovieName { get; set; }
 
-        public RecordingInformation()
+        public RecordInformation()
         {
-
         }
 
-        public RecordingInformation(string movieLink, string movieName)
+        public RecordInformation(string movieLink, string movieName)
         {
             MovieLink = movieLink;  
             MovieName = movieName;
