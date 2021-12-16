@@ -12,18 +12,18 @@ namespace MovieInformationFileStorage
 {
     internal class MovieFileSerializer
     {
-        public void Serialize( string path, List<RecordInformation> recordings)
+        public void Serialize( string path, List<Movie> recordings)
         {
-            string itemJson = JsonSerializer.Serialize(recordings, typeof (List<RecordInformation>));
+            string itemJson = JsonSerializer.Serialize(recordings, typeof (List<Movie>));
             Console.WriteLine(itemJson);
             StreamWriter streamWriter = new StreamWriter(path);
             streamWriter.WriteLine(itemJson);
             streamWriter.Close();
         }
-        public List<RecordInformation> Deserialize (string path)
+        public List<Movie> Deserialize (string path)
         {
             string strItemInforationDeserialize = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<List<RecordInformation>>(strItemInforationDeserialize);           
+            return JsonSerializer.Deserialize<List<Movie>>(strItemInforationDeserialize);           
         }
     }
 }

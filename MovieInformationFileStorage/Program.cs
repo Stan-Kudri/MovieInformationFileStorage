@@ -8,55 +8,23 @@ var applicationFolderPath = System.IO.Directory.GetCurrentDirectory();
 var pathWithTextFileName = $@"{applicationFolderPath}\MovieStorage.json";
 
 //Информация по фильмам
-List<RecordInformation> recordingInformation = new List<RecordInformation>()
+List<Movie> recordingInformation = new List<Movie>()
 {
-    new RecordInformation("http://fast-torrent.club/film/melochi.html","Дьявол в деталя"),
-    new RecordInformation("http://fast-torrent.club/film/cherri-1.html","По наклонной"),
-    new RecordInformation("http://fast-torrent.club/film/liga-spravedlivosti-zaka-snajdera.html","Лига справедливости")
+    new Movie("http://fast-torrent.club/film/melochi.html","Дьявол в деталя"),
+    new Movie("http://fast-torrent.club/film/cherri-1.html","По наклонной"),
+    new Movie("http://fast-torrent.club/film/liga-spravedlivosti-zaka-snajdera.html","Лига справедливости")
 };
-recordingInformation.Add(new RecordInformation("http://fast-torrent.club/film/staroe.html", "Время"));
-
-
+recordingInformation.Add(new Movie("http://fast-torrent.club/film/staroe.html", "Время"));
+//Отобразить путь файла------>
 Console.WriteLine("Путь файла, ");
 Console.WriteLine(pathWithTextFileName);
-
-
-
-
-
-foreach (var itemInformation in recordingInformation)
-{
-    Console.Write(itemInformation.MovieLink + "   -   ");
-    Console.WriteLine(itemInformation.MovieName);
-}
-
-
-
-
-
-WorkInElement movieInformationFileStorage = new WorkInElement(pathWithTextFileName);
-
-
-
-
-
-
-var fileSerializationOrDeserialization = new MovieFileSerializer();
-fileSerializationOrDeserialization.Serialize(pathWithTextFileName, recordingInformation);
-
-movieInformationFileStorage.AddElementToList(new RecordInformation("http://fast-torrent.club/film/ozark.html", "Озарк"));
-movieInformationFileStorage.SaveSerializeList();
+//Вывести все элементы списка
+//Создание класса для работы со списком
+MovieStore movieInformationFileStorage = new MovieStore(pathWithTextFileName);
 movieInformationFileStorage.WriteItemsToFile();
-//List<RecordInformation> information = new List<RecordInformation>();
-
-
+movieInformationFileStorage.AddElementToList(new Movie("http://fast-torrent.club/film/ozark.html", "Озарк"));
+movieInformationFileStorage.SaveChanges();
+movieInformationFileStorage.WriteItemsToFile();
 Console.ReadLine();
-/*information = fileSerializationOrDeserialization.Deserialize(pathWithTextFileName);
 
-foreach (var itemInformation in information)
-{
-    Console.Write(itemInformation.MovieLink + "   -   ");
-    Console.WriteLine(itemInformation.MovieName);
-}
-*/
 

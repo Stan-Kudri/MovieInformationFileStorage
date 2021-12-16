@@ -8,22 +8,26 @@ namespace MovieInformationFileStorage
 {
     internal class ImpactCheckWithPath
     {
-        private string Path {get;set;}
-        private bool fileExistence;
-        public bool GetFileExistence()
+        private string _path;
+
+        public bool FileExist { get; set; }
+        
+        public string Path
         {
-            return fileExistence;
+            get { return _path; }
+            set
+            {
+                _path = value;
+                FileExist = File.Exists(value);
+            }
         }
-        public void SetFileExistence(bool value)
-        {
-            fileExistence = value;
-        }
+              
         public ImpactCheckWithPath(string path)
         {
             Path = path;
             FileInfo fileInfo = new FileInfo(Path);
             if(fileInfo.Exists)
-                SetFileExistence(true);
+                FileExist = true;
         }
 
 
