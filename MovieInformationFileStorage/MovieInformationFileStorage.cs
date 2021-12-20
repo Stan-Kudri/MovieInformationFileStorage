@@ -9,95 +9,81 @@ using System.Linq;
 namespace MovieInformationFileStorage
 {
         //Проверку по пути добавлю, поздно подумал о ней....................
-        internal class MovieStore
+    internal class MovieStore
     {
-        private string _path;
-        //Путь файла
-        public string Path
-        {
-            get { return _path; }
-            set
-            {
-                _path = value;
-                if ( !File.Exists(Path) )
-                {
-                    File.Create(Path);
-                }
-                Records = new List<Movie>();
-            }
-        }
-
+        private MovieFileSerializer _classSerializerOrDeserializer { get; set; }       
         //Список элементов
         private List<Movie> Records { get; set; }
-
-        private bool CheckingForMatches(Movie item)
-        {
-            if (Records.Contains(item))
-            {
-                return true;
-            }
-            else
-                return false;
+        private bool Exists(Movie item)
+        { 
+            return FindPosition(item) >= 0;
         }
         //Конструктор принимаемый путь файла
-        public MovieStore(string path)
-        {
-            this.Path = path;            
+        public MovieStore(MovieFileSerializer classSerializer)
+        {            
+            _classSerializerOrDeserializer = classSerializer;            
         }        
         //Прочитать элементы файла по переданному пути
-        public void ReadItemsToFile()
+        public List<Movie> SelectAll()
         {
-            var fileDeserialization = new MovieFileSerializer();
-            Records = fileDeserialization.Deserialize(Path);
-            
+            Records = _classSerializerOrDeserializer.Deserialize();
+            return Records;
+        }
+        //Записать список фильмов, принятых методом
+        public void AddRange(List<Movie> movies)
+        {
+            Records.AddRange(movies);
+            _classSerializerOrDeserializer.Serialize(Records);
         }
         //Сохранение сериализованного списка в файл по пути
         public void SaveChanges()
-        {
-            var fileSerialization = new MovieFileSerializer();
-            fileSerialization.Serialize(Path, Records);
+        {            
+            _classSerializerOrDeserializer.Serialize(Records);
         }
         //Откат к изначальному варианту списка
         public void RollbackChanges()
         {
             Records.Clear();
-            ReadItemsToFile();
+            SelectAll();
         }
         //Добавить элемент в список
-        public void AddElementToList(Movie itemInformation)
+        public void Add(Movie itemInformation)
         {
-            if( (itemInformation != null) && (!CheckingForMatches(itemInformation)) )
-            {
-                Records.Add(itemInformation);
-            }
+            if(itemInformation == null)
+                throw new ArgumentNullException(nameof(itemInformation));
+            if (Exists(itemInformation))
+                throw new InvalidOperationException("Этот элемент уже добавлен");
+
+            Records.Add(itemInformation);
+            _classSerializerOrDeserializer.Serialize(Records);
         }
-        //Удалить элемент списка по индексу
-        public void DeliteItemInList(Movie recordInformation)
+        //Удалить элемент списка
+        public void Delite(Movie recordInformation)
         {
-            if (Records.Count > 0)
-            {
-                Records.Remove(recordInformation);
-            }
+            Records.Remove(recordInformation);
+            _classSerializerOrDeserializer.Serialize(Records);
         }
+
         //Изменить элемент списка на переданный 
-        public void ChangeItemInList(Movie itemInformatio, Movie recordInformation)
+        public void Update(Movie updateItem)
         {
-            if(itemInformatio != null)
+            var index = FindPosition(updateItem);
+            if (index < 0)
+                return;
+
+            Records[index] = updateItem;
+            _classSerializerOrDeserializer.Serialize(Records);
+        }  
+
+        private int FindPosition(Movie item)
+        {
+            for (int i = 0; i < Records.Count; i++)
             {
-                Records.Insert(Records.IndexOf(recordInformation), itemInformatio);
+                Movie? record = Records[i];
+                if (record.Id == item.Id)
+                    return i;
             }
-        }       
-        //Вывод десериализованной информации
-        public void WriteItemsToFile()
-        {
-            Records = new List<Movie>();
-            var fileDeserialization = new MovieFileSerializer();
-            Records = fileDeserialization.Deserialize(Path);
-            foreach(var itemInformation in Records)
-            {
-                Console.Write(itemInformation.Link + "   -   ");
-                Console.WriteLine(itemInformation.Name);
-            }            
+            return -1;
         }
     }
 }
